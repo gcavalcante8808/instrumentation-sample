@@ -1,20 +1,46 @@
-
-
 from werkzeug.serving import run_simple
 
 
 import falcon
 import json
 
-app = falcon.API(media_type='application/json')
 
-class DefaultResource:
-    def on_get(self, req, resp):
-        resp.body = json.dumps({"Message":"Hello World"})
-        resp.status_code = 200
+#Middlewares
+from falcon_marshmallow import Marshmallow
+from middleware.PrometheusMiddleware import PrometheusMiddleware
+from middleware.SQLAlchemyMiddleware import SQLAlchemySessionManager
 
-resources = DefaultResource()
-app.add_route('/', resources)
+#Models and Schemas
+from models.ProductModel import Base, Product, ProductSchema
+from resources.SQLResource import SQLResource
+
+
+from utils.db import setup_db
+
+
+#Marshmallow serialize/deserialize framework.
+marshmallow = Marshmallow()
+
+#Initialize App and ADD prometheus middleware.
+prometheus = PrometheusMiddleware()
+
+#setup Db.
+Session = setup_db(Base)
+sqlalchemy = SQLAlchemySessionManager(Session)
+
+app = falcon.API(middleware=[
+                 
+                 prometheus,
+                 sqlalchemy,
+                 marshmallow,
+])
+
+app.add_route('/metrics', prometheus)
+
+
+#Product Endpoint
+product_resource = SQLResource(Session, Product, ProductSchema)
+app.add_route('/products', product_resource)
 
 
 if __name__ == '__main__':
