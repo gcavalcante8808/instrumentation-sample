@@ -1,7 +1,10 @@
 version: '2'
 
+volumes:
+  prom-data:
+
 services:
-  face:
+  app:
     image: sample 
     build: .
     # --reload is usefull for dev purposes.
@@ -13,4 +16,15 @@ services:
     volumes:
     #Mount the source in the folder is useful for dev purposes.
      - ./src:/usr/src/code
+
+  prometheus:
+    image: prom/prometheus:v2.4.3
+    entrypoint: ["/bin/prometheus"]
+    command:
+     - "--config.file=/etc/prometheus/prometheus.yml"
+    volumes:
+     - prom-data:/data
+     - ./k8s/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+    - 9090:9090
 

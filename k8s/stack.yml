@@ -1,0 +1,99 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+name: monitoring
+---
+kind: ConfigMap
+metadata:
+  name: prometheus-config-v1
+  namespace: monitoring
+apiVersion: v1
+#Get Base64 with kubectl create configmap prometheus-v1 --from-file=prometheus.yml --dry-run -oyaml
+data:
+  prometheus.yml: #TODO: Insert Base64 Here.
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    name: prometheus
+  name: prometheus
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: prometheus
+  template:
+    metadata:
+      labels:
+        name: prometheus
+    spec:
+      containers:
+      - args:
+        - -config.file=/etc/prometheus/prometheus.yml
+        - -storage.local.path=/data
+        - -storage.local.retention=24h
+        command:
+        - /bin/prometheus
+        image: quay.io/prometheus/prometheus:v2.4.3
+        name: prometheus
+        ports:
+        - containerPort: 9090
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 500m
+            memory: 2500Mi
+          requests:
+            cpu: 100m
+            memory: 512Mi
+        volumeMounts:
+        - mountPath: /data
+          name: prometheus-data
+        - mountPath: /etc/prometheus
+          name: config-volume
+      restartPolicy: Always
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: prometheus-data
+        EmptyDir: {}
+#        awsElasticBlockStore:
+#          volumeID: #EBS VolumeID.
+#          fsType: ext4
+      - configMap:
+          name: prometheus-config-v1
+        name: config-volume
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: monitoring
+spec:
+  ports:
+  - port: 9090
+    protocol: TCP
+    targetPort: 9090
+  selector:
+    name: prometheus
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: prometheus-infra
+  namespace: monitoring
+  annotations:
+    ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  rules:
+  - host: prom.server.local
+    http:
+      paths:
+      - backend:
+          serviceName: prometheus
+          servicePort: 9090
+        path: /
+
