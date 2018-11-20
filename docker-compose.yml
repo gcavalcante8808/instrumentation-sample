@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  face:
+    image: sample 
+    build: .
+    # --reload is usefull for dev purposes.
+    command: ["gunicorn","--reload","-c","gunicorn.py","app:app"]
+    environment:
+     - SERVER_PORT:5000
+    ports:
+     - 5000:5000
+    volumes:
+    #Mount the source in the folder is useful for dev purposes.
+     - ./src:/usr/src/code
+
