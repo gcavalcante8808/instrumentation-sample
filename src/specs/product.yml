@@ -1,0 +1,118 @@
+openapi: 3.0.0
+servers:
+  - url: 'http://sample.kubernetes.local'
+info:
+  description: >-
+    :dog: :cat: This is a sample instrumentation presentation server. 
+  version: 1.0.0
+  title: Instrumentation Sample
+  termsOfService: 'http://gpl.org'
+  contact:
+    email: root@local.host
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags: []
+paths:
+  /produtos/{id}/:
+    get:
+      summary: Get Product By Id
+      description: ''
+      operationId: views.ProductView.on_get
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: product_id
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+      callbacks: {}
+    put:
+      summary: Updated Product
+      description: Update Products.
+      operationId: views.ProductView.on_put
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: product_id
+      responses:
+        '200':
+          description: Ok.
+        '412':
+          description: Pre Condition Failed.
+          content:
+            application/json:
+              schema: {}
+        '400':
+          description: Some error was ocurred.
+        '404':
+          description: Product Not Found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+        description: Updated product object
+        required: true
+    post:
+      summary: ''
+      description: ''
+      parameters: 
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: product_id
+      operationId: views.ProductView.on_post
+      responses:
+        '201':
+          description: Ok
+        '412':
+          description: Pre condition faield.
+        default:
+          description: Default response
+externalDocs:
+  description: See AsyncAPI example
+  url: 'https://mermade.github.io/shins/asyncapi.html'
+components:
+  schemas:
+    Product:
+      type: object
+      required:
+        - name
+        - price
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        price:
+          type: number
+          description: price of the product
+        currency:
+          type: string
+          description: currency used in the price
+          enum:
+            - us_dollar
+            - br_real
+  requestBodies: {}
+  securitySchemes: {}
+  links: {}
+  callbacks: {}
+security: []
