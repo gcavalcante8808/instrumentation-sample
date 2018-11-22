@@ -14,13 +14,37 @@ info:
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 tags: []
 paths:
-  /products/{id}/:
+  /products/:
+    get:
+      summary: Get Products List
+      description: ''
+      operationId: resources.ProductView.on_get
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+      callbacks: {}
+    post:
+      summary: 'Create new Products'
+      description: ''
+      operationId: resources.ProductView.on_post
+      responses:
+        '201':
+          description: Ok
+        '412':
+          description: Pre condition faield.
+        default:
+          description: Default response
+  /products/{product_id}/:
     get:
       summary: Get Product By Id
       description: ''
       operationId: resources.ProductView.on_get
       parameters:
-        - name: id
+        - name: product_id
           in: path
           required: true
           schema:
@@ -43,7 +67,7 @@ paths:
       description: Update Products.
       operationId: resources.ProductView.on_put
       parameters:
-        - name: id
+        - name: product_id
           in: path
           required: true
           schema:
@@ -68,24 +92,6 @@ paths:
               $ref: '#/components/schemas/Product'
         description: Updated product object
         required: true
-    post:
-      summary: ''
-      description: ''
-      parameters: 
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-          description: product_id
-      operationId: resources.ProductView.on_post
-      responses:
-        '201':
-          description: Ok
-        '412':
-          description: Pre condition faield.
-        default:
-          description: Default response
 externalDocs:
   description: See AsyncAPI example
   url: 'https://mermade.github.io/shins/asyncapi.html'
