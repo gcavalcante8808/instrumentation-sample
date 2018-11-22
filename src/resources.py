@@ -3,6 +3,8 @@ from models.ProductModel import Product, ProductSchema
 
 
 class ProductView:
+    schema = ProductSchema(session=Session)
+
     def __init__(self):
         self.session = Session
 
@@ -12,5 +14,10 @@ class ProductView:
     def on_post():
         pass
 
-    def on_put():
+    def on_put(self, req, resp, **kwargs):
+        data = req.context['json']
+        if isinstance(data, Product):
+            self.session.add(data)
+            response = self.session.commit()
+            print(data.id)
         pass

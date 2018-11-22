@@ -14,11 +14,11 @@ info:
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 tags: []
 paths:
-  /produtos/{id}/:
+  /products/{id}/:
     get:
       summary: Get Product By Id
       description: ''
-      operationId: views.ProductView.on_get
+      operationId: resources.ProductView.on_get
       parameters:
         - name: id
           in: path
@@ -41,7 +41,7 @@ paths:
     put:
       summary: Updated Product
       description: Update Products.
-      operationId: views.ProductView.on_put
+      operationId: resources.ProductView.on_put
       parameters:
         - name: id
           in: path
@@ -78,7 +78,7 @@ paths:
           schema:
             type: string
           description: product_id
-      operationId: views.ProductView.on_post
+      operationId: resources.ProductView.on_post
       responses:
         '201':
           description: Ok
