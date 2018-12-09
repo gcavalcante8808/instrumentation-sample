@@ -8,7 +8,8 @@ services:
     image: sample 
     build: .
     # --reload is usefull for dev purposes.
-    command: ["gunicorn","--reload","-c","gunicorn.py","app:app"]
+    # command: ["gunicorn","--reload","-c","gunicorn.py","app:app"]
+    command: ["python","app.py"]
     environment:
      - SERVER_PORT:5000
     ports:
