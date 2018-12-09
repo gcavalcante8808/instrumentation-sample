@@ -13,17 +13,21 @@ class ProductView:
     def on_get(self, req, resp, product_id=None):
         """ List or Retrieve Operation """
         if not product_id:
-            req.context['result'] = self.session.query(Product).all()
-            resp.status = falcon.HTTP_200
+            self.schema = ProductSchema(session=Session,many=True)
+            result = self.session.query(Product).all()
+            req.context['result'] = result
 
-        #Retrieve Operation.
-        result = self.session.query(Product).filter_by(id=product_id).first()
-        req.context['result'] = result
-        
+        if product_id:
+            result = self.session.query(Product).filter_by(id=product_id).first()
+            req.context['result'] = result
 
-    def on_post():
+    def on_post(self, req, resp):
         """ Create Operation """
-        raise NotImplementedError
+        data = req.context['json']
+        if isinstance(data, Product):
+            self.session.add(data)
+            self.session.commit()
+            resp.status = falcon.HTTP_201
 
     def on_put(self, req, resp, **kwargs):
         """ Update a specific Object """
@@ -34,6 +38,7 @@ class ProductView:
 
 
 class MetricsView:
+
     def on_get(self, req, resp):
         data = generate_latest()
         resp.content_type = 'text/plain; version=0.0.4; charset=utf-8'

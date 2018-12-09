@@ -8,3 +8,5 @@ sqlalchemy-utils
 marshmallow-sqlalchemy
 falcon_marshmallow
 falcon-openapi
+pandas
+requests

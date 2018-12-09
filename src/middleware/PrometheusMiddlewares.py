@@ -20,7 +20,6 @@ class RequestsCounterMiddleware(object):
     """ Count resquests by method, path and status """
 
     def process_response(self, req, resp, resource, req_succeeded):
-        # resp_time = time.time() - req.start_time
         request_counter.labels(method=req.method, path=req.path, status=resp.status).inc()
 
 

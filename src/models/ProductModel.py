@@ -10,8 +10,8 @@ class Product(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     price = Column(Float, nullable=False)
-    enterprise_id = Column(Integer)
-    currency = Column(String)
+    enterprise_id = Column(Integer,nullable=False)
+    currency = Column(String,default='us_dollar')
 
 
 class ProductSchema(ModelSchema):
