@@ -18,8 +18,9 @@ products = ['DDR4 Memory', 'DDR3 Memory', 'Intel CPU', 'AMD CPU']
 execution_time = list()
 execution_results = list()
 async def create_product():
-    headers = {'Content-Type':'application/json'}
-    data = {'name': random.choice(products), 'enterprise_id':random.choice(enterprises),
+    enterprise_id = random.choice(enterprises)
+    headers = {'Content-Type':'application/json', 'X-Enterprise-id': str(enterprise_id)}
+    data = {'name': random.choice(products), 'enterprise_id': enterprise_id,
             'price': random.choice(range(100,200)), 'currency': 'us_dollar'}
 
     response = requests.post(url, data=json.dumps(data), headers=headers)
@@ -41,5 +42,5 @@ if __name__ == '__main__':
     s = pd.Series(execution_time)
     print(s.describe())
 
-    response = requests.get(url)
-    print("#### List all Products Routine:{} ####".format(response.elapsed.total_seconds()))
+    resp = requests.get(url)
+    print("#### List all Products Routine:{} ####".format(resp.elapsed.total_seconds()))

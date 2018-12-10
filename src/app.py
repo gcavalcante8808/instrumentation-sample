@@ -9,18 +9,12 @@ from falcon_openapi import OpenApiRouter
 from falcon_marshmallow import Marshmallow as MarshmallowMiddleware
 from middleware.PrometheusMiddlewares import RequestsCounterMiddleware, RequestsTimerMiddleware
 from middleware.SQLAlchemyMiddleware import SQLAlchemySessionManager
+from middleware.RequestOwnerMiddleware import InjectOwnerIntoContextMiddleware
 
 # #Models and Schemas
 from models.ProductModel import Base
 from utils.db import setup_db
 
-
-#Marshmallow serialize/deserialize framework Middleware.
-marshmallow = MarshmallowMiddleware()
-
-#Initialize App and ADD prometheus middleware.
-req_counter = RequestsCounterMiddleware()
-req_timer = RequestsTimerMiddleware()
 
 #setup Db. Strip base from ProductModel.
 Session = setup_db(Base)
@@ -28,10 +22,11 @@ sqlalchemy = SQLAlchemySessionManager(Session)
 
 router = OpenApiRouter(file_path='specs/product.yml')
 app = falcon.API(middleware=[
-                 req_timer,
-                 req_counter,
+                 InjectOwnerIntoContextMiddleware(),
+                 RequestsTimerMiddleware(),
+                 RequestsCounterMiddleware(),
+                 MarshmallowMiddleware(),
                  sqlalchemy,
-                 marshmallow,
                 ],
                 router=router
 )
