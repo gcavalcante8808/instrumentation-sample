@@ -1,0 +1,5 @@
+django<2.0
+django_prometheus
+werkzeug
+django_extensions
+djangorestframework

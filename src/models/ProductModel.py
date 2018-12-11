@@ -4,6 +4,7 @@ from marshmallow_sqlalchemy import ModelSchema
 
 Base = declarative_base()
 
+
 class Product(Base):
     __tablename__ = 'product'
 

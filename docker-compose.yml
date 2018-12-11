@@ -19,6 +19,15 @@ services:
     #Mount the source in the folder is useful for dev purposes.
      - ./src:/usr/src/code
 
+  django:
+    image: django-sample
+    build: django_src/
+    command:  ["python","manage.py","runserver_plus","0.0.0.0:8000"]
+    ports:
+    - 8000:8000
+    volumes:
+    - ./django_src:/usr/src/code
+
   prometheus:
     image: prom/prometheus:v2.4.3
     entrypoint: ["/bin/prometheus"]
